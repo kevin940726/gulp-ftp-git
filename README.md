@@ -19,11 +19,19 @@ Include the dependencies in your `package.json` file. and run
 $ npm install
 ```
 
-Set up git environment and remote server.
+Set up git environment and remote server. Push your first commit to remote server. (Do it in your own way)
+```
+$ git init
+$ git remote add origin <path to remote>
+$ git add .
+$ git commit -m "first commit"
+$ git push origin master
+```
 
 Create a task for your push task in your `gulpfile.js`.
 
 ##### Example
+[gulpfile.js](gulpfile.js)
 ```js
 var gulp = require('gulp'),
     git = require('gulp-git'), // git
