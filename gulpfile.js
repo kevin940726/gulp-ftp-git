@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     git = require('gulp-git'), // git
     gutil = require('gulp-util'), // log
     ftp = require('vinyl-ftp'), // ftp
-    argv = require('yargs').argv; // pass arguments
+    argv = require('yargs').argv, // pass arguments
+    fs = require('fs'); // load file
 
 
 gulp.task('push', function() {
@@ -12,7 +13,8 @@ gulp.task('push', function() {
         branch = argv.b === undefined && argv.branch === undefined ? 'master' : argv.b || argv.branch;
 
     // get diffs between local and remote.
-    return git.exec({args: 'diff --name-status ' + remote + '/' + branch + ' ' + branch}, function(err, stdout) {
+    // max buffer 1024 * 1024
+    return git.exec({args: 'diff --name-status ' + remote + '/' + branch + ' ' + branch, maxBuffer: 1024 * 1024}, function(err, stdout) {
         if (err) throw err;
 
         var list = stdout;
@@ -24,6 +26,9 @@ gulp.task('push', function() {
                 path: a[1]
             };
         });
+
+        // save last list to cache
+        fs.writeFileSync('.gulp-ftp-git-cache.json', JSON.stringify(list));
 
         // push to remote
         return git.push(remote, branch, function(err) {
